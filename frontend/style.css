@@ -15,6 +15,9 @@
   --status-warning: #fab219;
   --status-serious: #ec835a;
   --status-critical: #d03b3b;
+  /* 判定不能（気温が5〜25℃の適用範囲外）用の中立色。重大度を持たないため
+     good/warning/serious/criticalのどれにも属さない別枠として扱う。 */
+  --status-neutral: #898781;
   font-family: "Hiragino Sans", "Yu Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -121,6 +124,7 @@ caption { text-align: left; color: var(--color-muted); font-size: 0.82rem; paddi
 .badge.status-serious { background: var(--status-serious); color: #fff; }
 .badge.status-warning { background: var(--status-warning); color: #241a00; }
 .badge.status-good { background: var(--status-good); color: #fff; }
+.badge.status-neutral { background: var(--status-neutral); color: #fff; }
 
 #result-summary { margin-bottom: 0.5rem; }
 
@@ -144,6 +148,7 @@ caption { text-align: left; color: var(--color-muted); font-size: 0.82rem; paddi
 .legend-swatch.status-serious { background: var(--status-serious); }
 .legend-swatch.status-warning { background: var(--status-warning); }
 .legend-swatch.status-good { background: var(--status-good); }
+.legend-swatch.status-neutral { background: var(--status-neutral); }
 
 #mills-chart-wrap { position: relative; }
 #mills-chart svg { width: 100%; height: auto; overflow: visible; }
@@ -167,6 +172,7 @@ caption { text-align: left; color: var(--color-muted); font-size: 0.82rem; paddi
 .mills-point.status-serious { fill: var(--status-serious); }
 .mills-point.status-warning { fill: var(--status-warning); }
 .mills-point.status-good { fill: var(--status-good); }
+.mills-point.status-neutral { fill: var(--status-neutral); }
 
 .mills-point-hit { fill: transparent; cursor: pointer; }
 .mills-point-hit:focus { outline: 2px solid var(--color-primary); outline-offset: 2px; }

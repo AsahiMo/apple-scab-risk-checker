@@ -157,7 +157,7 @@ function finalizePeriod(period) {
 
 // Millsテーブル（黒星病の感染危険度モデル）に基づく判定。
 // 4次多項式による近似曲線3本（S/M/L、それぞれ必要な連続濡れ時間の閾値を気温から算出）。
-// 有効な気温範囲は5〜25℃（この範囲外は判定対象外＝リスクなし）。
+// 有効な気温範囲は5〜25℃。
 const MILLS_TEMP_MIN = 5;
 const MILLS_TEMP_MAX = 25;
 
@@ -177,7 +177,11 @@ const MILLS_STATUS = {
   S: { label: "警報", statusKey: "critical" },
   M: { label: "危険", statusKey: "serious" },
   L: { label: "注意", statusKey: "warning" },
-  NONE: { label: "リスクなし", statusKey: "good" },
+  // L未満：Millsテーブル上は感染成立の目安に届かないが、局地的な微気象等により
+  // 感染の可能性が皆無とは言い切れないため「リスクなし」ではなく「リスク低」と表現する。
+  LOW: { label: "感染リスク低", statusKey: "good" },
+  // 5〜25℃の範囲外：Millsテーブルの適用範囲外のため判定そのものができない。
+  UNKNOWN: { label: "判定不能", statusKey: "neutral" },
 };
 
 // 四捨五入して小数点第一位までにする（判定はこの丸めた気温で行う）
@@ -186,13 +190,13 @@ function round1(x) {
 }
 
 function classifyMills(avgTemp, durationHours) {
-  if (avgTemp === null || durationHours === 0) return "NONE";
+  if (avgTemp === null || durationHours === 0) return "UNKNOWN";
   const t = round1(avgTemp);
-  if (t < MILLS_TEMP_MIN || t > MILLS_TEMP_MAX) return "NONE";
+  if (t < MILLS_TEMP_MIN || t > MILLS_TEMP_MAX) return "UNKNOWN";
   if (durationHours >= millsHoursS(t)) return "S";
   if (durationHours >= millsHoursM(t)) return "M";
   if (durationHours >= millsHoursL(t)) return "L";
-  return "NONE";
+  return "LOW";
 }
 
 function assessPeriod(period) {
@@ -275,17 +279,22 @@ function renderResults(assessed) {
   if (assessed.length === 0) {
     el("result-summary").textContent = "指定期間中、葉が濡れた時間帯はありませんでした。";
   } else {
-    const counts = { S: 0, M: 0, L: 0 };
+    const counts = { S: 0, M: 0, L: 0, LOW: 0, UNKNOWN: 0 };
     for (const p of assessed) if (counts[p.millsClass] !== undefined) counts[p.millsClass]++;
+    let summary;
     if (counts.S + counts.M + counts.L === 0) {
-      el("result-summary").textContent = "Millsテーブルによる感染リスクが認められる濡れ期間はありませんでした。";
+      summary = "Millsテーブルによる感染リスクが認められる濡れ期間はありませんでした。";
     } else {
       const parts = [];
       if (counts.S) parts.push(`警報 ${counts.S}件`);
       if (counts.M) parts.push(`危険 ${counts.M}件`);
       if (counts.L) parts.push(`注意 ${counts.L}件`);
-      el("result-summary").textContent = `⚠ ${parts.join("・")}`;
+      summary = `⚠ ${parts.join("・")}`;
     }
+    if (counts.UNKNOWN) {
+      summary += `（うち${counts.UNKNOWN}件は気温が5〜25℃の範囲外のため判定不能）`;
+    }
+    el("result-summary").textContent = summary;
   }
 
   for (const p of assessed) {
@@ -317,7 +326,7 @@ function renderResults(assessed) {
 // S/M/L 各判定の閾値曲線と、実際の濡れ期間を重ねて表示する。
 // ---------------------------------------------------------------------------
 
-const MILLS_ORDER = ["S", "M", "L", "NONE"];
+const MILLS_ORDER = ["S", "M", "L", "LOW", "UNKNOWN"];
 
 function renderMillsChart(periods) {
   const container = el("mills-chart");
