@@ -1,0 +1,5 @@
+name = "amedas-proxy"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# 無料プランで動作します（1日あたり100,000リクエストまで無料、クレジットカード登録不要）

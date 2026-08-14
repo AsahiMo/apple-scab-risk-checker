@@ -1,0 +1,15 @@
+# 依存パッケージ（npm installで復元可能）
+node_modules/
+
+# wranglerのローカルキャッシュ・一時ファイル
+.wrangler/
+
+# Claude Codeのローカル権限設定（マシン固有のパス・作業履歴を含むため非公開）
+.claude/settings.local.json
+
+# 開発時の検討過程・作業ログを含む内部メモ（公開版の情報はREADME.mdに集約）
+DESIGN.md
+
+# OS/エディタ由来のゴミファイル
+.DS_Store
+Thumbs.db

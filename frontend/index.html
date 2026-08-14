@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リンゴ黒星病 感染危険度チェック</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>リンゴ黒星病 感染危険度チェック</h1>
+  <p class="lead">アメダスの気温・降水量から葉の濡れ時間を推定し、黒星病の感染危険度を目安として表示します。</p>
+  <p class="note">※ ここで示す感染危険度は、越冬した落葉上の子のう殻から放出される<strong>子のう胞子による一次感染</strong>の危険度を対象としたものです。園地内で発病した病斑から生じる分生胞子による二次感染は対象に含まれません。</p>
+</header>
+
+<main>
+  <section id="station-section">
+    <h2>1. 観測地点を選ぶ</h2>
+    <div id="current-station" class="current-station hidden">
+      <span>現在の選択：<strong id="current-station-name"></strong></span>
+      <button id="change-station-btn" type="button">変更する</button>
+    </div>
+
+    <div id="station-search">
+      <label for="address-input">住所または地名</label>
+      <div class="search-row">
+        <input id="address-input" type="text" placeholder="例: 長野県長野市南長野">
+        <button id="search-btn" type="button">検索</button>
+      </div>
+      <p id="search-status" class="status"></p>
+      <ul id="station-candidates" class="candidates"></ul>
+    </div>
+  </section>
+
+  <section id="period-section" class="hidden">
+    <h2>2. 期間を選ぶ</h2>
+    <div class="period-row">
+      <label>から <input id="from-date" type="date"></label>
+      <label>まで <input id="to-date" type="date"></label>
+      <button id="check-btn" type="button">危険度を確認</button>
+    </div>
+    <p id="fetch-status" class="status"></p>
+  </section>
+
+  <section id="result-section" class="hidden">
+    <h2>3. 結果</h2>
+    <div id="result-summary"></div>
+
+    <div id="mills-chart-wrap" class="viz-root">
+      <div class="chart-head">
+        <h3>Millsテーブル判定（子のう胞子による一次感染）</h3>
+        <ul id="mills-legend" class="legend"></ul>
+      </div>
+      <div id="mills-chart"></div>
+    </div>
+
+    <table id="result-table">
+      <caption>濡れ期間ごとの詳細（グラフと同じデータの表形式）</caption>
+      <thead>
+        <tr>
+          <th>濡れ開始</th>
+          <th>濡れ終了</th>
+          <th>継続時間</th>
+          <th>期間平均気温</th>
+          <th>判定</th>
+        </tr>
+      </thead>
+      <tbody id="result-tbody"></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>
+      ※ このアプリは気象庁の非公式な仕組みを利用しており、参考値です。
+      アメダス観測点は必ずしも園地内にあるとは限らないため、局地的な結露・霜などは反映されません。
+      詳しくは <a href="../README.md">README.md</a> を参照してください。
+    </p>
+  </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

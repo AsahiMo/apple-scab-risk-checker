@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "C:\\Python314\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "8123", "--directory", "frontend"],
+      "port": 8123
+    }
+  ]
+}

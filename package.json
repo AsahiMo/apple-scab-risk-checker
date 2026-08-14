@@ -1,0 +1,20 @@
+{
+  "name": "applescab",
+  "version": "1.0.0",
+  "description": "アメダスの過去データ（時別の気温・降水量）を、指定した地点・期間で取得するCloudflare Workers製プロキシAPIです。無料プランの範囲で動作します。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "wrangler": "^4.120.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260801.1": true
+  }
+}
