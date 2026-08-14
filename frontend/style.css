@@ -9,6 +9,12 @@
   --color-danger: #b3402a;
   --color-warn: #c78a1f;
   --color-safe: #4a7a3d;
+  /* ステータス色（Millsテーブル判定: S/M/L/リスクなし）。固定パレットで明暗モード共通、
+     結果テーブルのバッジとグラフの両方から参照するため:rootスコープで定義する。 */
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
   font-family: "Hiragino Sans", "Yu Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -113,7 +119,7 @@ caption { text-align: left; color: var(--color-muted); font-size: 0.82rem; paddi
 .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.82rem; }
 .badge.status-critical { background: var(--status-critical); color: #fff; }
 .badge.status-serious { background: var(--status-serious); color: #fff; }
-.badge.status-warning { background: var(--status-warning); color: #3a2a05; }
+.badge.status-warning { background: var(--status-warning); color: #241a00; }
 .badge.status-good { background: var(--status-good); color: #fff; }
 
 #result-summary { margin-bottom: 0.5rem; }
@@ -125,10 +131,6 @@ caption { text-align: left; color: var(--color-muted); font-size: 0.82rem; paddi
   --viz-text-secondary: var(--color-muted);
   --viz-muted: #898781;
   --viz-grid: #e1e0d9;
-  --status-good: #0ca30c;
-  --status-warning: #fab219;
-  --status-serious: #ec835a;
-  --status-critical: #d03b3b;
   margin-bottom: 1rem;
 }
 
@@ -203,5 +205,4 @@ footer a { color: var(--color-muted); }
     --viz-muted: #a89e8d;
     --viz-grid: #3a352c;
   }
-  .badge.status-warning { color: #241a00; }
 }
