@@ -10,6 +10,9 @@ node_modules/
 # 開発時の検討過程・作業ログを含む内部メモ（公開版の情報はREADME.mdに集約）
 DESIGN.md
 
+# 他プロジェクト・他チャットで再利用するためのローカル参照メモ
+docs/
+
 # OS/エディタ由来のゴミファイル
 .DS_Store
 Thumbs.db
