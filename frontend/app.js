@@ -501,16 +501,16 @@ function createMillsTooltip() {
 
 async function handleCheck() {
   const stid = el("period-section").dataset.stid;
-  const from = el("from-date").value.replace(/-/g, "");
-  const to = el("to-date").value.replace(/-/g, "");
-  if (!stid || !from || !to) return;
+  const year = el("target-year").value;
+  const fromMD = el("from-date").value.slice(5); // "MM-DD"
+  const toMD = el("to-date").value.slice(5);
+  if (!stid || !year || !fromMD || !toMD) return;
 
   // 黒星病の感染期は春〜夏が中心で年をまたぐ期間指定に意味がないため、
-  // 年単位での確認に限定する（obsdl側の技術的な制限とは無関係の、意図的な仕様）
-  if (from.slice(0, 4) !== to.slice(0, 4)) {
-    el("fetch-status").textContent = "開始日と終了日は同じ年内で指定してください。";
-    return;
-  }
+  // 年は別枠の単一選択とし（対象年）、開始日・終了日は月日のみを指定させる
+  // 仕様にしている（obsdl側の技術的な制限とは無関係の、意図的な仕様）
+  const from = `${year}${fromMD.replace("-", "")}`;
+  const to = `${year}${toMD.replace("-", "")}`;
 
   el("fetch-status").textContent = "データ取得中…";
   el("result-section").classList.add("hidden");
@@ -525,29 +525,53 @@ async function handleCheck() {
   }
 }
 
-// from/toの日付ピッカーが互いに同じ年の範囲しか選べないようにする（handleCheckの年跨ぎ禁止と対）
-function syncYearBounds(sourceId, targetId) {
-  const source = el(sourceId);
-  const target = el(targetId);
-  if (!source.value) return;
-  const year = source.value.slice(0, 4);
-  target.min = `${year}-01-01`;
-  target.max = `${year}-12-31`;
-  if (target.value && target.value.slice(0, 4) !== year) {
-    target.value = `${year}${target.value.slice(4)}`;
+// from-date/to-dateの<input type="date">は月日ピッカーとしてのみ使う。年の値は
+// 見た目上の整合（うるう年のカレンダー表示など）のためだけに使い、実際の年は常に
+// #target-year の値を使う（handleCheckを参照）。ここでは表示上の年を#target-yearに
+// 揃えておく。
+function applyYearToDateInput(inputId, year) {
+  const input = el(inputId);
+  if (!input.value) return;
+  const md = input.value.slice(5); // "MM-DD"
+  const candidate = `${year}-${md}`;
+  // 2/29→非うるう年になる場合はDateが自動繰り上がりするので2/28に丸める
+  const d = new Date(`${candidate}T00:00:00`);
+  if (String(d.getFullYear()) === String(year)) {
+    input.value = candidate;
+  } else {
+    input.value = `${year}-02-28`;
+  }
+}
+
+function populateTargetYearOptions() {
+  const select = el("target-year");
+  const currentYear = new Date().getFullYear();
+  select.innerHTML = "";
+  for (let y = currentYear; y >= currentYear - 15; y--) {
+    const opt = document.createElement("option");
+    opt.value = String(y);
+    opt.textContent = `${y}年`;
+    select.appendChild(opt);
   }
 }
 
 async function init() {
+  populateTargetYearOptions();
+
   // obsdlは当日分のデータをまだ持っていないことが多いため、既定の終了日は「昨日」にする
   const yesterday = new Date(Date.now() - 86400000);
   const weekAgo = new Date(yesterday.getTime() - 6 * 86400000);
+  el("target-year").value = String(yesterday.getFullYear());
   el("to-date").value = ymd(yesterday).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
   el("from-date").value = ymd(weekAgo).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
-  syncYearBounds("to-date", "from-date");
+  // weekAgoが前年にまたがった場合（既定期間が1/1を跨ぐ場合）は月日ピッカーの
+  // 年表示だけを対象年に揃える（実際に使う年は#target-yearの値なので計算結果には影響しない）
+  applyYearToDateInput("from-date", el("target-year").value);
 
-  el("from-date").addEventListener("change", () => syncYearBounds("from-date", "to-date"));
-  el("to-date").addEventListener("change", () => syncYearBounds("to-date", "from-date"));
+  el("target-year").addEventListener("change", () => {
+    applyYearToDateInput("from-date", el("target-year").value);
+    applyYearToDateInput("to-date", el("target-year").value);
+  });
 
   el("search-btn").addEventListener("click", handleSearch);
   el("address-input").addEventListener("keydown", (e) => {
