@@ -1,14 +1,12 @@
 :root {
-  --color-bg: #f7f5f0;
-  --color-surface: #ffffff;
-  --color-text: #2b2620;
-  --color-muted: #6b6459;
-  --color-border: #ddd6c9;
-  --color-primary: #4a7a3d;
-  --color-primary-dark: #375c2d;
-  --color-danger: #b3402a;
-  --color-warn: #c78a1f;
-  --color-safe: #4a7a3d;
+  /* りんごの葉をイメージした、彩度を抑えたグリーン系テーマ（濃すぎる色は避けている） */
+  --color-bg: #f2f6ee;
+  --color-surface: #fdfefb;
+  --color-text: #283323;
+  --color-muted: #6f7d63;
+  --color-border: #dbe4cf;
+  --color-primary: #5c8a4c;
+  --color-primary-dark: #4a7040;
   /* ステータス色（Millsテーブル判定: S/M/L/リスクなし）。固定パレットで明暗モード共通、
      結果テーブルのバッジとグラフの両方から参照するため:rootスコープで定義する。 */
   --status-good: #0ca30c;
@@ -210,14 +208,14 @@ footer a { color: var(--color-muted); }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1c1a17;
-    --color-surface: #24211c;
-    --color-text: #ece7de;
-    --color-muted: #a89e8d;
-    --color-border: #3a352c;
+    --color-bg: #171f14;
+    --color-surface: #202a1c;
+    --color-text: #e6ecdf;
+    --color-muted: #9fae90;
+    --color-border: #33402c;
   }
   .viz-root {
-    --viz-muted: #a89e8d;
-    --viz-grid: #3a352c;
+    --viz-muted: #9fae90;
+    --viz-grid: #33402c;
   }
 }
