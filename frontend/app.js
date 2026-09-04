@@ -199,9 +199,25 @@ function classifyMills(avgTemp, durationHours) {
   return "LOW";
 }
 
+// りんご褐斑病（Diplocarpon mali）の子のう胞子による一次感染判定。
+// 葉面濡れ時間6時間以上 かつ 濡れ中平均気温13.8℃以上で感染成立とする単純な閾値モデル。
+const KAPPANBYO_MIN_WET_HOURS = 6;
+const KAPPANBYO_MIN_TEMP = 13.8;
+
+function classifyKappanbyo(avgTemp, durationHours) {
+  if (avgTemp === null) return false;
+  return durationHours >= KAPPANBYO_MIN_WET_HOURS && avgTemp >= KAPPANBYO_MIN_TEMP;
+}
+
 function assessPeriod(period) {
   const millsClass = classifyMills(period.avgTemp, period.durationHours);
-  return { ...period, millsClass, tempForJudgement: period.avgTemp !== null ? round1(period.avgTemp) : null };
+  const kappanbyoInfected = classifyKappanbyo(period.avgTemp, period.durationHours);
+  return {
+    ...period,
+    millsClass,
+    kappanbyoInfected,
+    tempForJudgement: period.avgTemp !== null ? round1(period.avgTemp) : null,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -314,7 +330,16 @@ function renderResults(assessed) {
     badge.className = `badge status-${status.statusKey}`;
     badge.textContent = status.label;
     tdJudge.appendChild(badge);
-    tr.append(tdStart, tdEnd, tdDuration, tdTemp, tdJudge);
+    const tdKappanbyo = document.createElement("td");
+    if (p.kappanbyoInfected) {
+      const kBadge = document.createElement("span");
+      kBadge.className = "badge status-critical";
+      kBadge.textContent = "感染成立";
+      tdKappanbyo.appendChild(kBadge);
+    } else {
+      tdKappanbyo.textContent = "-";
+    }
+    tr.append(tdStart, tdEnd, tdDuration, tdTemp, tdJudge, tdKappanbyo);
     tbody.appendChild(tr);
   }
 
